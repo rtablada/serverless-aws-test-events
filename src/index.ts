@@ -96,7 +96,6 @@ class AwsTestEventsPlugin implements Plugin {
         'test-event-name': {
           usage: 'name for test event',
           shortcut: 'e',
-          default: 'default',
         },
       },
     },

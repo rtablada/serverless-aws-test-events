@@ -1,8 +1,16 @@
 {
   "name": "serverless-aws-test-events",
+  "description": "A serverless plugin to generate repeatable test events for AWS lambda",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
+  "keywords": [
+    "aws",
+    "serverless.com",
+    "serverless",
+    "serverless plugins",
+    "aws lambda"
+  ],
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.json"
   },

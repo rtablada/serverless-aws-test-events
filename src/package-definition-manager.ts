@@ -19,10 +19,13 @@ export default class PackageDefinitionManager extends TestPathManager {
 
   async addScriptsForEvent(fnName: string, eventName: string): Promise<void> {
     const dasherizedFnName = dasherize(underscore(fnName));
-    const scriptName = `invoke:${dasherizedFnName}:${eventName}`;
+    const scriptName = `invoke:${dasherizedFnName}:${eventName}`.replace(/\:default$/, '');
     const devScriptName = `${scriptName}:dev`;
 
-    this.addScript(scriptName, `yarn invoke -f ${fnName} -p ${this.options['test-event-dir']}/${eventName}.json`);
+    this.addScript(
+      scriptName,
+      `yarn invoke -f ${fnName} -p ${this.options['test-event-dir']}/${dasherizedFnName}/${eventName}.json`
+    );
     this.addScript(devScriptName, `yarn invoke ${scriptName} -s dev`);
   }
 
