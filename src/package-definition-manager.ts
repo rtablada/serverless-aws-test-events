@@ -26,7 +26,7 @@ export default class PackageDefinitionManager extends TestPathManager {
       scriptName,
       `yarn invoke -f ${fnName} -p ${this.options['test-event-dir']}/${dasherizedFnName}/${eventName}.json`
     );
-    this.addScript(devScriptName, `yarn invoke ${scriptName} -s dev`);
+    this.addScript(devScriptName, `yarn ${scriptName} -s dev`);
   }
 
   addScript(scriptName: string, scriptStr: string): void {
