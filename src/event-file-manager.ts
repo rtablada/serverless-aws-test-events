@@ -1,5 +1,5 @@
 import TestPathManager from './test-path-manager';
-import { exists as existsNative, writeFile as writeFileNative } from 'fs';
+import { exists as existsNative, writeFile as writeFileNative, readdir as readdirNative } from 'fs';
 import { promisify } from 'util';
 import { dasherize, underscore } from 'inflection';
 import { createDirIfNotExists } from './utils';
@@ -8,8 +8,20 @@ import scheduleTemplate from './templates/schedule.json';
 
 const exists = promisify(existsNative);
 const writeFile = promisify(writeFileNative);
+const readdir = promisify(readdirNative);
 
 export default class EventFileManager extends TestPathManager {
+  async getEventNamesForFunction(fnName: string): Promise<string[]> {
+    const dasherizedFnName = dasherize(underscore(fnName));
+    const functionTestPath = path.join(this.testEventPath, dasherizedFnName);
+
+    const info = await readdir(functionTestPath);
+
+    return info.reduce((accum, fileName) => {
+      return fileName.match(/\.json$/) ? [...accum, fileName.replace(/\.json$/, '')] : accum;
+    }, [] as string[]);
+  }
+
   async createEventForFunction(fnName: string, scenarioName: string, eventType: string | undefined): Promise<void> {
     const dasherizedFnName = dasherize(underscore(fnName));
     const functionTestPath = path.join(this.testEventPath, dasherizedFnName);
