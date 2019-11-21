@@ -1,12 +1,13 @@
 import Plugin, { Commands } from 'serverless/classes/Plugin';
 import Serverless from 'serverless';
 import path from 'path';
-import { exists as existsNative, mkdir as mkdirNative } from 'fs';
+import { exists as existsNative, mkdir as mkdirNative, writeFile as writeFileNative, write } from 'fs';
 import { promisify } from 'util';
 import { dasherize, underscore } from 'inflection';
 
 const exists = promisify(existsNative);
 const mkdir = promisify(mkdirNative);
+const writeFile = promisify(writeFileNative);
 
 interface TestEventsOptions {
   'test-event-dir': string;
@@ -24,13 +25,28 @@ const createDirIfNotExists = async (dir, alert): Promise<boolean> => {
 };
 
 class AwsTestEventsPlugin implements Plugin {
-  async checkOrCreateTestEvents(fnName: string): Promise<void> {
+  async checkOrCreateDefaultTestEvents(fnName: string): Promise<void> {
     const dasherizedFnName = dasherize(underscore(fnName));
     const functionTestPath = path.join(this.testEventPath, dasherizedFnName);
     await createDirIfNotExists(
       functionTestPath,
       `Test event directory for "${dasherizedFnName}", creating directory now.`
     );
+
+    if (!(await exists(path.join(functionTestPath, 'default.json')))) {
+      console.log(`Creating default event for "${dasherizedFnName}."`);
+      await this.createEventForFunction(fnName, 'default');
+    }
+  }
+
+  async createEventForFunction(fnName: string, scenarioName: string): Promise<void> {
+    const dasherizedFnName = dasherize(underscore(fnName));
+    const functionTestPath = path.join(this.testEventPath, dasherizedFnName);
+    const eventData = {};
+
+    await writeFile(path.join(functionTestPath, `${scenarioName}.json`), JSON.stringify(eventData, null, 2), {
+      encoding: 'utf8',
+    });
   }
 
   get testEventPath(): string {
@@ -44,7 +60,7 @@ class AwsTestEventsPlugin implements Plugin {
 
     await createDirIfNotExists(this.testEventPath, 'Test event directory not found, creating directory now.');
 
-    await Promise.all(functionNames.map(async (fnName) => await this.checkOrCreateTestEvents(fnName)));
+    await Promise.all(functionNames.map(async (fnName) => await this.checkOrCreateDefaultTestEvents(fnName)));
   };
 
   hooks = {
