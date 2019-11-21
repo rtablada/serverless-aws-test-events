@@ -1,12 +1,15 @@
 import { TestEventPluginOptions } from './test-event-plugin-options';
 import path from 'path';
+import Serverless from 'serverless';
 
-export default abstract class TestPathManager {
+export default abstract class Manager {
   servicePath: string;
   options: TestEventPluginOptions;
+  serverless: Serverless;
 
-  constructor(servicePath: string, options: TestEventPluginOptions) {
-    this.servicePath = servicePath;
+  constructor(serverless: Serverless, options: TestEventPluginOptions) {
+    this.serverless = serverless;
+    this.servicePath = this.serverless.config.servicePath;
     this.options = options;
   }
 

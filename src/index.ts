@@ -41,8 +41,8 @@ class AwsTestEventsPlugin implements Plugin {
     this.options = options;
 
     this.options['test-event-dir'] = this.options['test-event-dir'] || 'test-events';
-    this.directoryManager = new EventDirectoryManager(this.serverless.config.servicePath, this.options);
-    this.eventFileManager = new EventFileManager(this.serverless.config.servicePath, this.options);
+    this.directoryManager = new EventDirectoryManager(this.serverless, this.options);
+    this.eventFileManager = new EventFileManager(this.serverless, this.options);
   }
 }
 
