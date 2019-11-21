@@ -1,7 +1,7 @@
 {
   "name": "serverless-aws-test-events",
   "description": "A serverless plugin to generate repeatable test events for AWS lambda",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "license": "MIT",
   "keywords": [
